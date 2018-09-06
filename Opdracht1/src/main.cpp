@@ -11,8 +11,7 @@ int main(void){
 
     // Same as Loop() in adruino. Infite loop while 1.
     while(1){
-
-      
+        //
         PORTB = 0b000100000; // Set pin pb5 to high with data bank B
         _delay_ms(2000); //Wacht 2 seconden
         PORTB = 0b000000000; //Set pin to LOW with data bank B
