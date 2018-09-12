@@ -170,8 +170,12 @@ void setNumbers(int row, int number){
 
 }
 
-void counToTen(){
-  setNumberRight(0);
+void countToTen(){
+  for( int a = 0; a < 10; a = a + 1 ) {
+   setNumberRight(a);
+   _delay_ms(delayTime);
+  }
+  /*setNumberRight(0);
   _delay_ms(delayTime);
   setNumberRight(1);
   _delay_ms(delayTime);
@@ -190,7 +194,7 @@ void counToTen(){
   setNumberRight(8);
   _delay_ms(delayTime);
   setNumberRight(9);
-  _delay_ms(delayTime);
+  _delay_ms(delayTime);*/
 }
 
 
@@ -202,7 +206,7 @@ int main(void){
 
     // Same as Loop() in adruino. Infite loop while 1.
     while(1){
-      counToTen(); 
+      countToTen();
 
     }
 
