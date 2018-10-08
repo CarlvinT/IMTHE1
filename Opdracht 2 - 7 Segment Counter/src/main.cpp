@@ -1,6 +1,8 @@
-//Imports
-#include <avr/io.h> // IO PIN LIBRARY
-#include <util/delay.h>// DELAY LIBRARY
+
+#include <avr/io.h>
+#include <util/delay.h>
+#include <stdlib.h>
+
 
 /* Wiring info
 
@@ -57,147 +59,245 @@ B =
 A =
 
 */
-int delayTime = 1000;
+
+int LNumber = 0;
+
+void clearNumbers(){
+  PORTD = 0xff;
+  PORTB = 0xff;
+  PORTC = 0xff;
+}
+
+void clearRight(){
+  PORTD = 0xFF;
+  PORTB |= (1<<1);
+  PORTB |= (1<<2);
+}
+
+void clearLeft(){
+  PORTC = 0xff;
+  PORTB |= (1<<7);
+  PORTB |= (1<<6);
+  PORTB |= (1<<5);
+  PORTB |= (1<<4);
+  PORTB |= (1<<3);
+}
 
 void opstelling(){
-
-  // SET GROUPS AS OUTPUT
-  DDRD = 0xff; // SET ALL PINS AS OUTPUT IN D
-  DDRB = 0xff; // SET ALL PINS AS OUTPUT IN B
-
-  // SET ALL PINS AS HIGH
-  //PORTD = 0xff; // SET ALL PINS AS HIGH IN D
-  //PORTB = 0xff; // SET ALL PINS AS HIHGH IN B
+  // Define Pin and data bank
+  DDRD = 0xff;
+  DDRB = 0xff;
+  DDRC = 0xff;
+  clearNumbers();
 }
 
 void setNumberRight(int number){
   // 8,9 B Bank
   if ( number == 0 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10101100;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<2);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<3);
+
   }
   else if ( number == 1 ) {
-    DDRB = 0b00000000;
-    DDRD = 0b10100000;
+    clearNumbers();
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<7);
   }
   else if ( number == 2 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10011100;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<2);
+    PORTD &= ~(1<<3);
   }
   else if ( number == 3 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10111000;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<3);
+    PORTD &= ~(1<<4);
   }
   else if ( number == 4 ) {
-    DDRB = 0b00000010;
-    DDRD = 0b10110000;
+    clearNumbers();
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<5);
+
   }
   else if ( number == 5 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b00111000;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<3);
   }
   else if ( number == 6 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b00111100;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<2);
+    PORTD &= ~(1<<3);
   }
   else if ( number == 7 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10100000;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<5);
   }
   else if ( number == 8 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10111111;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<2);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<3);
+
   }
   else if ( number == 9 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10111000;
+    clearNumbers();
+    PORTB &= ~(1<<0);
+    PORTB &= ~(1<<1);
+    PORTD &= ~(1<<7);
+    PORTD &= ~(1<<4);
+    PORTD &= ~(1<<5);
+    PORTD &= ~(1<<3);
   }
 
 }
 
 void setNumberLeft(int number){
-  // 8,9 B Bank
+  /*
+        A = PC1
+
+F = PC3         B = PC0
+
+        G = PC2
+
+E = PB4         C = PB2
+
+        D = PB3
+
+*/
   if ( number == 0 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10101100;
+    clearLeft();
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC1);
+    PORTB &= ~(1<< PB4);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
+
   }
   else if ( number == 1 ) {
-    DDRB = 0b00000000;
-    DDRD = 0b10100000;
+    clearLeft();
+    PORTC &= ~(1<< PC0);
+    PORTB &= ~(1<< PB2);
   }
   else if ( number == 2 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10011100;
+    clearLeft();
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB4);
+    PORTB &= ~(1<< PB3);
   }
   else if ( number == 3 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10111000;
+    clearLeft();
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
   }
   else if ( number == 4 ) {
-    DDRB = 0b00000010;
-    DDRD = 0b10110000;
+    clearLeft();
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB2);
+
   }
   else if ( number == 5 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b00111000;
+    clearLeft();
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
   }
   else if ( number == 6 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b00111100;
+    clearLeft();
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB4);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
   }
   else if ( number == 7 ) {
-    DDRB = 0b00000001;
-    DDRD = 0b10100000;
+    clearLeft();
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC0);
+    PORTB &= ~(1<< PB2);
   }
   else if ( number == 8 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10111111;
+    clearLeft();
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB4);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
   }
   else if ( number == 9 ) {
-    DDRB = 0b00000011;
-    DDRD = 0b10111000;
+    clearLeft();
+    PORTC &= ~(1<< PC0);
+    PORTC &= ~(1<< PC3);
+    PORTC &= ~(1<< PC1);
+    PORTC &= ~(1<< PC2);
+    PORTB &= ~(1<< PB2);
+    PORTB &= ~(1<< PB3);
   }
 
 }
 
-void setNumbers(int row, int number){
-  if ( row == 1) {
-    setNumberLeft(number);
-  }
-  else if( row == 2 ) {
-    setNumberRight(number);
-  }
-
-}
 
 void countToTen(){
   for( int a = 0; a < 10; a = a + 1 ) {
    setNumberRight(a);
-   _delay_ms(delayTime);
+   _delay_ms(1000);
   }
-  /*setNumberRight(0);
-  _delay_ms(delayTime);
-  setNumberRight(1);
-  _delay_ms(delayTime);
-  setNumberRight(2);
-  _delay_ms(delayTime);
-  setNumberRight(3);
-  _delay_ms(delayTime);
-  setNumberRight(4);
-  _delay_ms(delayTime);
-  setNumberRight(5);
-  _delay_ms(delayTime);
-  setNumberRight(6);
-  _delay_ms(delayTime);
-  setNumberRight(7);
-  _delay_ms(delayTime);
-  setNumberRight(8);
-  _delay_ms(delayTime);
-  setNumberRight(9);
-  _delay_ms(delayTime);*/
 }
 
-
+void countToHundred(){
+  if (LNumber == 10)
+  {
+    LNumber = 0;
+  }
+  for( int a = 0; a < 10; a = a + 1 ) {
+    setNumberRight(a);
+    setNumberLeft(LNumber);
+    if (a == 9)
+    {
+      LNumber += 1;
+    }
+   _delay_ms(1000);
+  }
+}
 
 // Main function so program can run
 int main(void){
@@ -206,8 +306,7 @@ int main(void){
 
     // Same as Loop() in adruino. Infite loop while 1.
     while(1){
-      countToTen();
-
+      countToHundred();
     }
 
     // Return 0 cause main is int
