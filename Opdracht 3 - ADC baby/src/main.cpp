@@ -1,65 +1,70 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdlib.h>
-
-void opstelling(){
-  DDRC = 0xff;
-}
-
 /*
-X AXIS: ALWAYS ON HIGH
-PC3 = led pin 7 (X AXIS row 1)
-PC5 = led pin 2 (X AXIS row 2)
-PC4 = led pin 5 (X AXIS row 3)
 
+BUtton = PB3
 
-Y AXIS: ALWAYS ON LOW
-PC2 = led pin 13(Y AXIS ROW 1)
-PC1 = led pin 3 (Y AXIS ROW 2)
-PC0 = led pin 4 (y AXIS ROW 3)
-
-DOT COMBINATION:
-1=
-2=
-3=
-4=
-5=
-6=
+Lights:
+PC0 PC3 PD4
+PC1 PC4 PD3
+PC2 PC5 PD2
 
 
 */
+bool swiching = false;
 
-void blinks(){
-  PORTC |= (1<<5);
-  PORTC |= (1<<4);
-  PORTC |= (1<<3);
-  _delay_ms(1000);
-  PORTC &= ~(1<<5);
-  PORTC &= ~(1<<4);
-  PORTC &= ~(1<<3);
-  _delay_ms(1000);
 
+void opstelling(){
+  DDRC = 0xff;
+  DDRD = 0xff;
+  PORTC = 0x00;
+  PORTD = 0x00;
+
+  PORTB |= (1<<3);
 }
 
-void clearNumber(){
- PORTC = 0xff;
+void reset(){
+  PORTC = 0x00;
+  PORTD = 0x00;
 }
 
-
-void setNumber(int number)
-{
-  if(number == 0)
+void setNumber(int number){
+  reset();
+  if(number == 1)
   {
-    PORTC &= ~(1<<3);
-    PORTC &= ~(1<<4);
-    PORTC &= ~(1<<2);
-    PORTC &= ~(1<<0);
-
-
+    PORTC |= (1<< PC4);
   }
-  else if(number == 1)
+  else if(number == 2)
   {
-
+      PORTD |= (1<< PD4);
+      PORTC |= (1<< PC2);
+  }
+  else if(number == 3)
+  {
+      PORTD |= (1<< PD4);
+      PORTC |= (1<< PC2);
+      PORTC |= (1<< PC4);
+  }
+  else if(number == 4)
+  {
+    PORTD |= (1<< PD4);
+    PORTC |= (1<< PC2);
+    PORTC |= (1<< PC0);
+    PORTD |= (1<< PD2);
+  }
+  else if(number == 5)
+  {
+    PORTD |= (1<< PD4);
+    PORTC |= (1<< PC2);
+    PORTC |= (1<< PC0);
+    PORTC |= (1<< PC4);
+    PORTD |= (1<< PD2);
+  }
+  else if(number == 6)
+  {
+    PORTC = 0xff;
+    PORTD = 0xff;
   }
 
 }
@@ -71,7 +76,24 @@ int main(void){
 
     // Same as Loop() in adruino. Infite loop while 1.
     while(1){
-      setNumber(0);
+      if (bit_is_clear(PINB, PB3)){
+        // PRESSED
+        if (swiching == false){
+          setNumber(rand() % 6 + 1);
+          _delay_ms(200);
+        }
+        swiching = true;
+      }
+      else {
+        // NOT PRESSED
+        if (swiching == true)
+        {
+          swiching = false;
+        }
+      }
+
+
+
 
 
 
