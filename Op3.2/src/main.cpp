@@ -63,10 +63,12 @@ int main(void){
 
     // Same as Loop() in adruino. Infite loop while 1.
     while(1){
-      PORTD = (1<<PD2);
-      delay_ms(getFrequency());
-      PORTD &= ~(1<<PD2);
-      delay_ms(getFrequency());
+      uint16_t msDelay = getFrequency();
+
+      PORTD ^= (1<<PD2);
+      delay_ms(msDelay);
+      PORTD ^= (1<<PD2);
+      delay_ms(msDelay);
 
 
     }// Return 0 cause main is int
