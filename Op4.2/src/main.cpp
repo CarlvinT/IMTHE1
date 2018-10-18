@@ -1,34 +1,91 @@
-#include <Arduino.h>
+// seting up baud rate, enige ding die mist van het boek. hier gevonden: https://www.avrfreaks.net/forum/setting-avr-baud-rates-c . een beetje aanpassing nodig
+#define BAUD 9600
+#include "util/setbaud.h"
+#include <avr/io.h>
+#include <util/delay.h>
 
-// define some macros
-#define BAUD 9600                                   // define baud
-#define BAUDRATE ((F_CPU)/(BAUD*16UL)-1)            // set baud rate value for UBRR
-
-// function to initialize UART
-void uart_init (void)
-{
-    UBRRH = (BAUDRATE>>8);                      // shift the register right by 8 bits
-    UBRRL = BAUDRATE;                           // set baud rate
-    UCSRB|= (1<<TXEN)|(1<<RXEN);                // enable receiver and transmitter
-    UCSRC|= (1<<URSEL)|(1<<UCSZ0)|(1<<UCSZ1);   // 8bit data format
+//
+void initLed(){
+  DDRB = 0xff;
+  DDRD = 0xff;
+  PORTD = 0xff;
+  PORTB |= (1<< 3);
 }
 
-void uart_transmit (unsigned char data)
-{
-    while (!( UCSRA & (1<<UDRE)));                // wait while register is free
-    UDR = data;                                   // load data in the register
+
+//ALLES HIERONDER IS LETTERLIJK UIT HET BOEK
+
+
+void initUSART(void) { /* requires BAUD */
+  UBRR0H = UBRRH_VALUE; /* defined in setbaud.h */
+  UBRR0L = UBRRL_VALUE;
+#if USE_2X
+  UCSR0A |= (1 << U2X0);
+#else
+  UCSR0A &= ~(1 << U2X0);
+#endif
+
+
+ /* Enable USART transmitter/receiver */
+ UCSR0B = (1 << TXEN0) | (1 << RXEN0);
+ UCSR0C = (1 << UCSZ01) | (1 << UCSZ00); /* 8 data bits, 1 stop bit */
 }
 
-unsigned char uart_recieve (void)
-{
-    while(!(UCSRA) & (1<<RXC));                   // wait while data is being received
-    return UDR;                                   // return 8-bit data
+void transmitByte(uint8_t data) {
+  /* Wait for empty transmit buffer */
+  loop_until_bit_is_set(UCSR0A, UDRE0);
+  UDR0 = data; /* send data */
 }
 
-void setup() {
-    // put your setup code here, to run once:
+uint8_t receiveByte(void) {
+  loop_until_bit_is_set(UCSR0A, RXC0); /* Wait for incoming data */
+  return UDR0; /* return register value */
+}
+// Example of a useful printing command
+void printString(const char myString[]) {
+  uint8_t i = 0;
+  while (myString[i]) {
+    transmitByte(myString[i]);
+    i++;
+ }
+}
+
+
+// EIND BOEK UITLEG.
+
+
+
+void opstelling(){
+  initUSART();
+  initLed();
 }
 
-void loop() {
-    // put your main code here, to run repeatedly:
+
+// Main function so program can run
+int main(void){
+
+    // Run code that only needs to be run once (setup)
+    opstelling();
+
+    // Same as Loop() in adruino. Infite loop while 1.
+    while(1){
+
+      // receive input
+      char message = receiveByte();
+
+      // check input and output appropriate action
+      if (message == 'a'){
+        PORTB ^= (1<<PB3);
+        printString("Led is aan \n");
+      }
+      else if (message == 'u'){
+        PORTB ^= (1<<PB3);
+        printString("Led is uit \n");
+      }
+      else{
+        printString("Wrong input \n");
+      }
+
+    }// Return 0 cause main is int
+    return 0;
 }
