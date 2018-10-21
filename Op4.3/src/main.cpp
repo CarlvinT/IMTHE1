@@ -10,7 +10,7 @@
 uint8_t  dutyCycle = 255;
 uint8_t  dutyCycleHigh = 255; // 255 == led is on
 uint8_t  dutyCycleLow = 0; // 255 == led is on
-uint8_t counter = 0;
+uint8_t  counter = 0;
 
 void initLed(){
   DDRB = 0xff;
