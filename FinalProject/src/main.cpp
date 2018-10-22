@@ -91,11 +91,12 @@ TIMSK0 |= (0 << TOIE0); // Enable timer intterupt
 uint32_t microseconds = (counter2 * 255) * 8; // get time in microseconds stored in counter2
 microseconds += TCNT0 * 8; // add value stored in counter register*/
 
-// check time elapsed and set speaker frequency
 
+// check time elapsed and set speaker frequency
 
   uint8_t distance = getDistance();
 
+  // Change speaker frequency based on range
   if(distance >= 200){
       DDRD &= ~(1<<3);
   }
